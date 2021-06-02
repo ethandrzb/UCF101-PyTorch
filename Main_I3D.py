@@ -6,7 +6,7 @@ import torch.optim as optim
 from torchsummary import summary
 
 import Model_I3D
-from Dataset import UCF101
+from Dataset_I3D import UCF101
 from Utils import build_paths, print_time, set_seed
 
 
@@ -69,7 +69,7 @@ model = Model_I3D.InceptionI3d(num_classes=num_classes)
 model = model.to(device)
 
 if model_summary:
-    summary(model, input_size=(3, clip_len, 112, 112))
+    summary(model, input_size=(3, clip_len, 224, 224))
 
 
 ### Optimizer, Loss, initial_lr Scheduler ##############################################################################
@@ -84,7 +84,6 @@ criterion.to(device)
 
 print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
 
-exit()
 
 ### Training ###########################################################################################################
 
