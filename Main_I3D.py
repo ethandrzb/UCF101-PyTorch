@@ -23,7 +23,7 @@ print('\n==> Initializing Hyperparameters...\n')
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 best_acc = 0                                                           # best test accuracy
 start_epoch = 0                                                        # start from epoch 0 or last checkpoint epoch
-num_epochs = 50                                                        # Default = 200
+num_epochs = 300                                                        # Default = 200
 initial_lr = .00001
 batch_size = 30
 num_workers = 2
