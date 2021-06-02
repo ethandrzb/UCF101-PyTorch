@@ -2,7 +2,7 @@ import os
 
 import torch
 import torch.nn as nn
-# from torchsummary import summary
+from torchsummary import summary
 
 class C3D(nn.Module):
 
@@ -144,8 +144,11 @@ def get_10x_lr_params(model):
 
 
 if __name__ == "__main__":
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     net = C3D(num_classes=10, pretrained_path="/Users/ethan/Documents/Pycharm Projects/Pretrained/c3d-pretrained.pth", pretrained=False)
-    # summary(net, input_size=(3, 16, 112, 112))
+    net = net.to(device)
+    summary(net, input_size=(3, 16, 112, 112))
     x = torch.ones((2, 3, 16, 112, 112))
+    x = x.to(device)
     y = net(x)
     print(y.shape)

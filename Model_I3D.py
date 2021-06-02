@@ -200,11 +200,13 @@ class InceptionModule(nn.Module):
 
 
 if __name__ == "__main__":
-
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     i3d = InceptionI3d()
+    i3d = i3d.to(device)
 
-    # summary(i3d, input_size=(3, 64, 224, 224))
+    summary(i3d, input_size=(3, 64, 224, 224))
 
     x = torch.ones((2, 3, 64, 224, 224))
+    x = x.to(device)
     y = i3d(x)
     print(y.shape)
