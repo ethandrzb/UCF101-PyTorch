@@ -70,9 +70,6 @@ def set_seed(seed=0):
         torch.cuda.manual_seed_all(seed)
 
 
-
-
-
 # Computes Mean and Std Dev, across RGB channels, of all training images in a Dataset & returns averages
 # Set Pytorch Transforms to None for this function
 def calc_mean_and_std(dataset):
