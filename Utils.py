@@ -16,7 +16,7 @@ def build_paths(print_paths=True):
     if cwd == win_cwd:
         print('==> Using Windows Paths...\n')
         print("We'll come back for you!!")
-        exit()
+        # exit()
         root = 'C:\\Users\\ethan\\Documents\\Pycharm Projects\\UCF101-PyTorch'
         # pretrained_model_path = '/Users/robertbrowning/Desktop/UCF/CRCV/Data/Pretrained/C3D_Sports1M_Pretrained.pickle'
         pretrained_model_path = '/Users/robertbrowning/Desktop/UCF/CRCV/Data/Pretrained/c3d-pretrained.pth'
