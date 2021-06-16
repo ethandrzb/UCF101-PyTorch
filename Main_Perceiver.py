@@ -5,18 +5,17 @@ import torch.nn as nn
 import torch.optim as optim
 from torchsummary import summary
 
-from perceiver_pytorch import Perceiver
 
 # import Model
-from Dataset import UCF101
+from Dataset_Perceiver import UCF101
 from Utils import build_paths, print_time, set_seed
-
+from perceiver_pytorch import Perceiver
 
 print_time('START TIME')
 
 #### Paths #############################################################################################################
 
-# class_idxs, train_split, test_split, frames_root, pretrained_path = build_paths()
+class_idxs, train_split, test_split, frames_root, pretrained_path = build_paths()
 
 #### Params ############################################################################################################
 
@@ -25,14 +24,14 @@ print('\n==> Initializing Hyperparameters...\n')
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 best_acc = 0                                                           # best test accuracy
 start_epoch = 0                                                        # start from epoch 0 or last checkpoint epoch
-num_epochs = 50                                                        # Default = 200
+num_epochs = 75                                                        # Default = 200
 initial_lr = .00001
-batch_size = 30
+batch_size = 5                                                        # Default = 30
 num_workers = 2
 num_classes = 101
 seed = 0
 clip_len = 16
-model_summary = False
+model_summary = True
 resume = False
 pretrain = False
 print_batch = False
@@ -52,24 +51,25 @@ print('Random Seed:', seed)
 
 print('\n==> Preparing Data...\n')
 
-# trainset = UCF101(class_idxs=class_idxs, split=train_split, frames_root=frames_root, clip_len=clip_len, train=True)
-# trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-#
-# testset = UCF101(class_idxs=class_idxs, split=test_split, frames_root=frames_root, clip_len=clip_len, train=False)
-# testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-#
-# print('Number of Classes: %d' % num_classes)
-# print('Number of Training Videos: %d' % len(trainset))
-# print('Number of Testing Videos: %d' % len(testset))
+trainset = UCF101(class_idxs=class_idxs, split=train_split, frames_root=frames_root, clip_len=clip_len, train=True)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+
+testset = UCF101(class_idxs=class_idxs, split=test_split, frames_root=frames_root, clip_len=clip_len, train=False)
+testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+
+print('Number of Classes: %d' % num_classes)
+print('Number of Training Videos: %d' % len(trainset))
+print('Number of Testing Videos: %d' % len(testset))
 
 
 ### Model ##############################################################################################################
 
 print('\n==> Building Model...\n')
+print('Model: ' + 'Perceiver\n')
 
 model = Perceiver(
     input_channels = 3,          # number of channels for each token of the input
-    input_axis = 2,              # number of axis for input data (2 for images, 3 for video)
+    input_axis = 3,              # number of axis for input data (2 for images, 3 for video)
     num_freq_bands = 6,          # number of freq bands, with original value (2 * K + 1)
     max_freq = 10.,              # maximum frequency, hyperparameter depending on how fine the data is
     depth = 6,                   # depth of net
@@ -86,17 +86,19 @@ model = Perceiver(
     fourier_encode_data = True,  # whether to auto-fourier encode the data, using the input_axis given. defaults to True, but can be turned off if you are fourier encoding the data yourself
     self_per_cross_attn = 2      # number of self attention blocks per cross attention
 )
+
 # model = Model.C3D(num_classes=num_classes, pretrained_path=pretrained_path, pretrained=pretrain, resume=resume)
 model = model.to(device)
 
-img = torch.randn(1, 224, 224, 3)
-
-model(img) # (1, 1000)
+# img = torch.randn(1, 16, 3, 112, 112).cuda()
+# img = torch.randn(1,16, 224,224,3).cuda()
+#
+# model(img) # (1, 1000)
 
 if model_summary:
-    summary(model, input_size=(3, clip_len, 112, 112))
+    summary(model, input_size=(clip_len, 112, 112, 3))
 
-exit()
+# exit()
 
 ### Optimizer, Loss, initial_lr Scheduler ##############################################################################
 
@@ -111,7 +113,7 @@ criterion.to(device)
 
 print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
 
-exit()
+# exit()
 
 ### Training ###########################################################################################################
 
