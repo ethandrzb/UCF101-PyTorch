@@ -7,7 +7,7 @@ from torchsummary import summary
 
 
 # import Model
-from Dataset import UCF101
+from Dataset_ViViT import UCF101
 from Utils import build_paths, print_time, set_seed
 import vivit
 
@@ -15,7 +15,7 @@ print_time('START TIME')
 
 #### Paths #############################################################################################################
 
-# class_idxs, train_split, test_split, frames_root, pretrained_path = build_paths()
+class_idxs, train_split, test_split, frames_root, pretrained_path = build_paths()
 
 #### Params ############################################################################################################
 
@@ -51,15 +51,15 @@ print('Random Seed:', seed)
 
 print('\n==> Preparing Data...\n')
 
-# trainset = UCF101(class_idxs=class_idxs, split=train_split, frames_root=frames_root, clip_len=clip_len, train=True)
-# trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-#
-# testset = UCF101(class_idxs=class_idxs, split=test_split, frames_root=frames_root, clip_len=clip_len, train=False)
-# testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-#
-# print('Number of Classes: %d' % num_classes)
-# print('Number of Training Videos: %d' % len(trainset))
-# print('Number of Testing Videos: %d' % len(testset))
+trainset = UCF101(class_idxs=class_idxs, split=train_split, frames_root=frames_root, clip_len=clip_len, train=True)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+
+testset = UCF101(class_idxs=class_idxs, split=test_split, frames_root=frames_root, clip_len=clip_len, train=False)
+testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+
+print('Number of Classes: %d' % num_classes)
+print('Number of Training Videos: %d' % len(trainset))
+print('Number of Testing Videos: %d' % len(testset))
 
 
 ### Model ##############################################################################################################
@@ -79,7 +79,7 @@ model = model.to(device)
 if model_summary:
     summary(model, input_size=(clip_len, 3, 112, 112))
 
-exit()
+# exit()
 
 ### Optimizer, Loss, initial_lr Scheduler ##############################################################################
 
@@ -94,7 +94,7 @@ criterion.to(device)
 
 print('Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
 
-exit()
+# exit()
 
 ### Training ###########################################################################################################
 

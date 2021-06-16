@@ -166,11 +166,14 @@ class UCF101(Dataset):
     @staticmethod
     def to_tensor(buffer):
         # (clip_len, height, width, channels)
-        buffer = buffer.transpose((3, 0, 1, 2))
-        # (channels, clip_len, height, width)
+        #     0        1       2       3
+        # buffer = buffer.transpose((3, 0, 1, 2))
+        # # (channels, clip_len, height, width)
+
+        buffer = buffer.transpose((0, 3, 1, 2))
+        # (clip_len, channels, height, width)
+
         return torch.from_numpy(buffer)
-
-
 
 if __name__ == '__main__':
 
@@ -181,15 +184,23 @@ if __name__ == '__main__':
     for i, (batch, labels) in enumerate(trainloader):
         labels = np.array(labels)
         for j, clip in enumerate(batch):
-            clip = np.array(clip).transpose((1, 2, 3, 0))
+            # (channels, clip_len, height, width)
+            # clip = np.array(clip).transpose((1, 2, 3, 0))
+
+            # (clip_len, channels, height, width)
+            clip = np.array(clip).transpose((0, 2, 3, 1))
+
+            # (clip_len, height, width, channels)
+
             clip += np.array([[[90.0, 98.0, 102.0]]])
-            # print(clip.shape)
-            for img in clip:
-                img = img.astype('uint8')
-                name = 'Class: %s' % str(labels[j] + 1)
-                cv2.imshow(name, img)
-                cv2.namedWindow(name, cv2.WINDOW_NORMAL)
-                cv2.resizeWindow(name, 140, 112)
-                cv2.moveWindow(name, 10, 30)
-                cv2.waitKey(50)
-                cv2.destroyAllWindows()
+            print(clip.shape)
+            # for img in clip:
+            #     img = img.astype('uint8')
+            #     name = 'Class: %s' % str(labels[j] + 1)
+            #     cv2.imshow(name, img)
+            #     cv2.namedWindow(name, cv2.WINDOW_NORMAL)
+            #     cv2.resizeWindow(name, 140, 112)
+            #     cv2.moveWindow(name, 10, 30)
+            #     cv2.waitKey(50)
+            #     cv2.destroyAllWindows()
+
