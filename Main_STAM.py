@@ -8,7 +8,7 @@ from torchsummary import summary
 from stam_pytorch import STAM
 
 # import Model
-from Dataset_STAM import UCF101
+from Dataset_ViViT import UCF101
 from Utils import build_paths, print_time, set_seed
 
 
@@ -66,6 +66,7 @@ print('Number of Testing Videos: %d' % len(testset))
 ### Model ##############################################################################################################
 
 print('\n==> Building Model...\n')
+print('Model: ' + 'STAM')
 
 model = STAM(
     dim = 512,
